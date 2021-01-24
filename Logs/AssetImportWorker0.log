@@ -2450,3 +2450,51 @@ Received Import Request.
 Start importing Assets/Scripts/Data/Unit/UnitController.cs using Guid(b987dfe78a1fa5745a0bbfb5a2896546) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '629ee720fd7db758e65d4a635ec6a550') in 0.048599 seconds
   Import took 0.053249 seconds .
 
+========================================================================
+Received Prepare
+Registering precompiled user dll's ...
+Registered in 0.002369 seconds.
+Begin MonoManager ReloadAssembly
+Native extension for WindowsStandalone target not found
+Refreshing native plugins compatible for Editor in 5.27 ms, found 0 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Warning: Annotation not found!
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEditor.ProBuilder.EditorUtility:SetGizmoIconEnabled (System.Type,bool) (at Library/PackageCache/com.unity.probuilder@4.4.0/Editor/EditorCore/EditorUtility.cs:593)
+UnityEditor.ProBuilder.HierarchyListener:.cctor () (at Library/PackageCache/com.unity.probuilder@4.4.0/Editor/EditorCore/HierarchyListener.cs:21)
+System.Runtime.CompilerServices.RuntimeHelpers:RunClassConstructor (System.RuntimeTypeHandle)
+UnityEditor.EditorAssemblies:ProcessInitializeOnLoadAttributes (System.Type[])
+
+[Library/PackageCache/com.unity.probuilder@4.4.0/Editor/EditorCore/EditorUtility.cs line 593]
+
+Invoked RoslynAnalysisRunner static constructor.
+RoslynAnalysisRunner will not be running.
+RoslynAnalysisRunner has terminated.
+Mono: successfully reloaded assembly
+- Completed reload, in  4.955 seconds
+Platform modules already initialized, skipping
+Refreshing native plugins compatible for Editor in 0.36 ms, found 0 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Unloading 1451 Unused Serialized files (Serialized files now loaded: 0)
+System memory in use before: 86.4 MB.
+System memory in use after: 86.4 MB.
+
+Unloading 7 unused Assets to reduce memory usage. Loaded Objects now: 2061.
+Total: 30.661878 ms (FindLiveObjects: 0.217579 ms CreateObjectMapping: 0.063974 ms MarkObjects: 15.827847 ms  DeleteObjects: 14.550084 ms)
+
+========================================================================
+Received Import Request.
+  Time since last request: 5906.934746 seconds.
+  path: Assets/Scripts/StateMachine
+  artifactKey: Guid(046d105504fe500409b1618ecb9785ee) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scripts/StateMachine using Guid(046d105504fe500409b1618ecb9785ee) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'b451c568024b19f18cdeba9534cc4a7d') in 0.023835 seconds
+  Import took 0.028832 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.006977 seconds.
+  path: Assets/Scripts/StateMachine
+  artifactKey: Guid(046d105504fe500409b1618ecb9785ee) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scripts/StateMachine using Guid(046d105504fe500409b1618ecb9785ee) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'b451c568024b19f18cdeba9534cc4a7d') in 0.009564 seconds
+  Import took 0.015575 seconds .
+
