@@ -6,18 +6,18 @@ using UnityEngine;
 public class Formation : ScriptableObject
 {
     Vector3 center;
-    Dictionary<ActorController, Vector3> relativePositions;
+    Dictionary<Unit, Vector3> relativePositions;
     // Start is called before the first frame update
     public Formation()
     {
-        relativePositions = new Dictionary<ActorController, Vector3>();
+        relativePositions = new Dictionary<Unit, Vector3>();
     }
 
-    public void addController(ActorController controller)
+    public void addUnit(Unit unit)
     {
-        if (!contains(controller))
+        if (!contains(unit))
         {
-            Vector3 pos = controller.transform.position;
+            Vector3 pos = unit.transform.position;
             if (relativePositions.Count == 0)
             {
                 center = pos;
@@ -26,20 +26,21 @@ public class Formation : ScriptableObject
             {
                 center = center + (pos - center) / (relativePositions.Count + 1);
             }*/
-            relativePositions.Add(controller, normalDeviation(controller));
+            relativePositions.Add(unit, deviationFromCenter(unit));
             Debug.Log("Formation center: " + center);
         }
     }
 
-    private Vector3 normalDeviation(ActorController controller){
-        return - (center - controller.transform.position);
+    private Vector3 deviationFromCenter(Unit unit)
+    {
+        return -(center - unit.transform.position);
     }
 
-    public void removeController(ActorController controller)
+    public void removeUnit(Unit unit)
     {
-        if (contains(controller))
+        if (contains(unit))
         {
-            Vector3 pos = controller.transform.position;
+            Vector3 pos = unit.transform.position;
             if (relativePositions.Count == 0)
             {
                 center = pos;
@@ -48,34 +49,28 @@ public class Formation : ScriptableObject
             {
                 center = center + (center - pos) / (relativePositions.Count - 1);
             }*/
-            relativePositions.Remove(controller);
+            relativePositions.Remove(unit);
             Debug.Log("Formation center: " + center);
         }
     }
 
-
-    public void move(Vector3 target)
+    public Vector3 actualCenter()
     {
-        foreach (ActorController controller in relativePositions.Keys)
+        Vector3 pos = new Vector3(0, 0, 0);
+        foreach (Unit unit in relativePositions.Keys)
         {
-            controller.moveTo(target + relativePositions[controller]);
+            pos += unit.transform.position;
         }
-        center = target;
-        Debug.Log("Center after movement is " + center);
+        return pos / relativePositions.Count;
     }
 
-    public Vector3 deviation(ActorController controller)
+    public Vector3 positionInFormation(Unit unit)
     {
-        return center - relativePositions[controller];
+        return relativePositions[unit];
     }
 
-    public Vector3 positionInFormation(ActorController controller)
+    public bool contains(Unit unit)
     {
-        return relativePositions[controller];
-    }
-
-    public bool contains(ActorController controller)
-    {
-        return relativePositions.ContainsKey(controller);
+        return relativePositions.ContainsKey(unit);
     }
 }

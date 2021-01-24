@@ -7,7 +7,8 @@ using UnityEngine.AI;
 public class UnitMotor : MonoBehaviour
 {
     NavMeshAgent navAgent;
-    Transform target; 
+    public NavMeshAgent NavAgent { get { return navAgent; } set { } }
+    Transform target;
 
     // Start is called before the first frame update
     void Start()
@@ -19,41 +20,46 @@ public class UnitMotor : MonoBehaviour
     void Update()
     {
         // If we have a target
-		if (target != null)
-		{
-			// Move towards it and look at it
-			navAgent.SetDestination(target.position);
-			FaceTarget();
-		}
+        if (target != null)
+        {
+            // Move towards it and look at it
+            navAgent.SetDestination(target.position);
+            faceTarget();
+        }
     }
 
-    public void MoveToPoint (Vector3 point)
-	{
-		navAgent.SetDestination(point);
-	}
+    public void moveToPoint(Vector3 point)
+    {
+        navAgent.SetDestination(point);
+    }
 
-    public void FollowTarget (Interactable newTarget)
-	{
-		navAgent.stoppingDistance = newTarget.radius * .8f;
-		navAgent.updateRotation = false;
+    public void followTarget(Interactable newTarget)
+    {
+        navAgent.stoppingDistance = newTarget.InteractionRange;
+        navAgent.updateRotation = false;
 
-		target = newTarget.transform;
-	}
+        target = newTarget.InteractionSource;
+    }
 
-	// Stop following a target
-	public void StopFollowingTarget ()
-	{
-		navAgent.stoppingDistance = 0f;
-		navAgent.updateRotation = true;
+    // Stop following a target
+    public void stopFollowingTarget()
+    {
+        navAgent.stoppingDistance = 0f;
+        navAgent.updateRotation = true;
 
-		target = null;
-	}
+        stop();
+    }
 
-	// Make sure to look at the target
-	void FaceTarget ()
-	{
-		Vector3 direction = (target.position - transform.position).normalized;
-		Quaternion lookRotation = Quaternion.LookRotation(new Vector3(direction.x, 0f, direction.z));
-		transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 5f);
-	}
+    public void stop()
+    {
+        target = null;
+    }
+
+    // Make sure to look at the target
+    void faceTarget()
+    {
+        Vector3 direction = (target.position - transform.position).normalized;
+        Quaternion lookRotation = Quaternion.LookRotation(new Vector3(direction.x, 0f, direction.z));
+        transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 5f);
+    }
 }

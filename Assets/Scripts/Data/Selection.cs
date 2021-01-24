@@ -5,60 +5,101 @@ using UnityEngine;
 public class Selection : ScriptableObject
 {
     Formation formation;
-    List<Selectable> selectedControllers;
+    List<Selectable> selected;
 
     public Selection()
     {
-        selectedControllers = new List<Selectable>();
+        selected = new List<Selectable>();
     }
 
-    void OnEnable(){
+    void OnEnable()
+    {
         formation = ScriptableObject.CreateInstance<Formation>();
     }
 
     public bool contains(Selectable controller)
     {
-        return selectedControllers.Contains(controller);
+        return selected.Contains(controller);
     }
 
-    public void addController(Selectable controller)
+    public void addToSelection(Selectable selected)
     {
-        if (!contains(controller))
+        if (!contains(selected))
         {
-            selectedControllers.Add(controller);
-            controller.select();
-            formation.addController((ActorController)controller);
+            this.selected.Add(selected);
+            selected.select();
+            //formation.addUnit((Unit)selected);
             //Debug.Log(getCenter());
         }
     }
 
-    public void removeController(Selectable controller)
+    public void removeFromSelection(Selectable selected)
     {
-        if (contains(controller))
+        if (contains(selected))
         {
-            selectedControllers.Remove(controller);
-            controller.deselect();
-            formation.removeController((ActorController)controller);
-            //Debug.Log(getCenter());
+            this.selected.Remove(selected);
+            selected.deselect();
+            //formation.removeUnit((Unit)selected);
         }
     }
 
     public void deselectAll()
     {
-        foreach (Selectable controller in selectedControllers)
+        foreach (Selectable controller in selected)
         {
             controller.deselect();
         }
-        selectedControllers.Clear();
+        selected.Clear();
         formation = ScriptableObject.CreateInstance<Formation>();
     }
 
-    public void setTarget(Vector3 target)
+    public void moveToTarget(Vector3 target)
     {
-        /*foreach (Selectable controller in selectedControllers)
+        foreach (Selectable current in selected)
         {
-            controller.setTarget(target);
-        }*/
-        formation.move(target);
+            // if(current is Moveable){
+            //     Moveable selectedMoveable = (Moveable)current;
+            //     selectedMoveable.moveTo(target);
+            // }
+            if (current is Unit)
+            {
+                Unit selectedUnit = (Unit)current;
+                selectedUnit.interupt();
+                selectedUnit.moveTo(target);
+            }
+        }
+    }
+
+    public void queueMoveToTarget(Vector3 target)
+    {
+        foreach (Selectable current in selected)
+        {
+            // if(current is Moveable){
+            //     Moveable selectedMoveable = (Moveable)current;
+            //     selectedMoveable.moveTo(target);
+            // }
+            if (current is Unit)
+            {
+                Unit selectedUnit = (Unit)current;
+                Command mvcmd = new Command();
+                mvcmd.init(selectedUnit, target);
+                selectedUnit.controller.addCommand(mvcmd);
+            }
+        }
+    }
+
+    public void pickUp(Item target)
+    {
+        //VERY HOT CODE
+        foreach (Selectable current in selected)
+        {
+            if (current is Unit)
+            {
+                Unit unit = (Unit)current;
+                Debug.Log("Unit " + unit + " will pick up item " + target);
+                unit.pickUpItem(target);
+                break;
+            }
+        }
     }
 }

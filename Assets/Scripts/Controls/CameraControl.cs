@@ -128,7 +128,7 @@ public class CameraControl : MonoBehaviour
 
     void Rotation()
     {
-            Debug.Log("123");
+            //Debug.Log("123");
         if (Input.GetButton("Fire3"))
         {
             Debug.Log("123");

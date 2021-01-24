@@ -43,42 +43,42 @@ public class Selector : MonoBehaviour
 
     public void select()
     {
-        ActorController hitController = getHitActorController();
-        if (hitController != null)
+        Selectable selected = getHitSelectable();
+        if (selected != null)
         {
+            Debug.Log(selected.SelectableTransform.gameObject.name);
             if (Input.GetButton("QueueCommands"))
             {
-                Debug.Log(hitController.name);
-                if (currentSelection.contains(hitController))
+                if (currentSelection.contains(selected))
                 {
-                    currentSelection.removeController(hitController);
+                    currentSelection.removeFromSelection(selected);
                 }
                 else
                 {
-                    currentSelection.addController(hitController);
+                    currentSelection.addToSelection(selected);
                 }
             }
             else
             {
                 currentSelection.deselectAll();
-                currentSelection.addController(hitController);
+                currentSelection.addToSelection(selected);
             }
         }
     }
 
-    private ActorController getHitActorController()
+    private Selectable getHitSelectable()
     {
-        ActorController selectedController = null;
+        Selectable selected = null;
         try
         {
-            //selectedController = selectionHit.collider.gameObject.transform.parent.gameObject.GetComponent<ActorController>();
-            selectedController = selectionHit.collider.gameObject.GetComponentInParent<ActorController>();
+            //selectedController = selectionHit.collider.gameObject.transform.parent.gameObject.GetComponent<Selectable>();
+            selected = selectionHit.collider.gameObject.GetComponentInParent<Selectable>();
         }
         catch (UnityException e)
         {
             Debug.Log(e.Message);
         }
-        return selectedController;
+        return selected;
     }
 
     public void rightMouseClick()
@@ -91,13 +91,27 @@ public class Selector : MonoBehaviour
                 int hitLayer = RMB_Hit.transform.gameObject.layer;
                 LayerMask groundMask = LayerMask.GetMask("Ground");
                 LayerMask actorsMask = LayerMask.GetMask("Actors");
-                if(layerMaskContainsLayer(actorsMask, hitLayer)){
-                    Debug.Log("Following.");
+                if (RMB_Hit.transform.gameObject.GetComponentInParent<Item>() != null)
+                {
+                    Debug.Log("Pick up.");
+                    currentSelection.pickUp(RMB_Hit.transform.gameObject.GetComponentInParent<Item>());
+                }
+                else if (layerMaskContainsLayer(actorsMask, hitLayer))
+                {
+                    Debug.Log("Following not implemented.");
                 }
                 else if (layerMaskContainsLayer(groundMask, hitLayer))
                 {
-                    currentSelection.setTarget(RMB_Hit.point);
-                    Debug.Log("Moving.");
+                    if (Input.GetButton("QueueCommands"))
+                    {
+                        Vector3 tmp = RMB_Hit.point;
+                        currentSelection.queueMoveToTarget(tmp);
+                    }
+                    else
+                    {
+                        currentSelection.moveToTarget(RMB_Hit.point);
+                        Debug.Log("Moving.");
+                    }
                 }
                 else
                 {
