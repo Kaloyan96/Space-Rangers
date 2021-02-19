@@ -5,8 +5,8 @@ using UnityEngine;
 public class CharacterStats : ScriptableObject {
 
 	// Health
-	public float maxHealth = 100;
-	public float currentHealth { get; private set; }
+	public float maxHealth = 100f;
+	public float CurrentHealth { get; private set; }
 	public float team;
 	public Stat damage;
 	public Stat armor;
@@ -16,7 +16,7 @@ public class CharacterStats : ScriptableObject {
 	// when starting the game.
 	void Awake ()
 	{
-		currentHealth = maxHealth;
+		CurrentHealth = maxHealth;
 	}
 
 	public float calculateDamage(){
@@ -31,6 +31,6 @@ public class CharacterStats : ScriptableObject {
 		damage = Mathf.Clamp(damage, 0, float.MaxValue);
 
 		// Damage the character
-		currentHealth -= damage;
+		CurrentHealth -= damage;
 	}
 }

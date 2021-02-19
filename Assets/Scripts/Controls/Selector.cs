@@ -2,29 +2,65 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.EventSystems;
 
 public class Selector : MonoBehaviour
 {
-    Selection currentSelection;
+    public Player Player { get; private set; }
+    public SelectionManager SelectionManager { get { return Player.SelectionManager; } private set { } }
+    public Selection CurrentSelection { get { return SelectionManager.CurrentSelection; } private set { } }
+    public EventSystem CurrentEventSystem { get; set; }
     RaycastHit selectionHit;
     RaycastHit RMB_Hit;
 
     void Start()
     {
-        //currentSelection = new Selection();
-        currentSelection = ScriptableObject.CreateInstance<Selection>();
+        CurrentEventSystem = EventSystem.current;
+    }
+
+    public void setPlayer(Player player)
+    {
+        if (Player == null)
+        {
+            Player = player;
+        }
     }
 
     void Update()
     {
-        if (Input.GetButtonDown("Fire1"))
-        {
-            leftMouseClick();
-        }
 
-        if (Input.GetButtonDown("Fire2"))
+        if (CurrentEventSystem.IsPointerOverGameObject())
         {
-            rightMouseClick();
+
+        }
+        else
+        {
+            if (Input.GetButtonDown("Fire1"))
+            {
+                leftMouseClick();
+            }
+
+            if (Input.GetButtonDown("Fire2"))
+            {
+                rightMouseClick();
+            }
+
+
+            if (isAlphaButtonDown())
+            {
+                if (Input.GetKey(KeyCode.LeftControl))
+                {
+                    saveSelection();
+                }
+                else if (Input.GetKey(KeyCode.LeftShift))
+                {
+                    addSelection();
+                }
+                else
+                {
+                    loadSelection();
+                }
+            }
         }
     }
 
@@ -49,20 +85,24 @@ public class Selector : MonoBehaviour
             Debug.Log(selected.SelectableTransform.gameObject.name);
             if (Input.GetButton("QueueCommands"))
             {
-                if (currentSelection.contains(selected))
+                if (CurrentSelection.contains(selected))
                 {
-                    currentSelection.removeFromSelection(selected);
+                    CurrentSelection.removeFromSelection(selected);
                 }
                 else
                 {
-                    currentSelection.addToSelection(selected);
+                    CurrentSelection.addToSelection(selected);
                 }
             }
             else
             {
-                currentSelection.deselectAll();
-                currentSelection.addToSelection(selected);
+                CurrentSelection.deselectAll();
+                CurrentSelection.addToSelection(selected);
             }
+        }
+        else
+        {
+            CurrentSelection.deselectAll();
         }
     }
 
@@ -83,7 +123,7 @@ public class Selector : MonoBehaviour
 
     public void rightMouseClick()
     {
-        if (currentSelection != null)
+        if (CurrentSelection != null)
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out RMB_Hit))
@@ -94,7 +134,7 @@ public class Selector : MonoBehaviour
                 if (RMB_Hit.transform.gameObject.GetComponentInParent<Item>() != null)
                 {
                     Debug.Log("Pick up.");
-                    currentSelection.pickUp(RMB_Hit.transform.gameObject.GetComponentInParent<Item>());
+                    // CurrentSelection.pickUp(RMB_Hit.transform.gameObject.GetComponentInParent<Item>());
                 }
                 else if (layerMaskContainsLayer(actorsMask, hitLayer))
                 {
@@ -102,16 +142,7 @@ public class Selector : MonoBehaviour
                 }
                 else if (layerMaskContainsLayer(groundMask, hitLayer))
                 {
-                    if (Input.GetButton("QueueCommands"))
-                    {
-                        Vector3 tmp = RMB_Hit.point;
-                        currentSelection.queueMoveToTarget(tmp);
-                    }
-                    else
-                    {
-                        currentSelection.moveToTarget(RMB_Hit.point);
-                        Debug.Log("Moving.");
-                    }
+                    CurrentSelection.moveToTarget(RMB_Hit.point, Input.GetButton("QueueCommands"));
                 }
                 else
                 {
@@ -132,6 +163,59 @@ public class Selector : MonoBehaviour
     private bool layerMaskContainsLayer(LayerMask layerMask, int layer)
     {
         return (layerMask == (layerMask | (1 << layer)));
+    }
+
+    private bool isAlphaButtonDown()
+    {
+        bool res = false;
+        for (KeyCode i = KeyCode.Alpha0; i <= KeyCode.Alpha9; i++)
+        {
+            if (Input.GetKeyDown(i))
+            {
+                // Debug.Log(i);
+                res = true;
+                break;
+            }
+        }
+        return res;
+    }
+
+    public void saveSelection()
+    {
+        Debug.Log("Selector issue save selection.");
+        SelectionManager.saveCurrentSelection(GetAlphaButtonDown().ToString());
+        Debug.Log(CurrentSelection.Selected.Count);
+    }
+
+    private KeyCode GetAlphaButtonDown()
+    {
+        KeyCode res = KeyCode.None;
+        for (KeyCode i = KeyCode.Alpha0; i <= KeyCode.Alpha9; i++)
+        {
+            if (Input.GetKeyDown(i))
+            {
+                res = i;
+                // Debug.Log(i);
+                break;
+            }
+        }
+        return res;
+    }
+
+    public void addSelection()
+    {
+        Debug.Log("Selector issue add to selection.");
+        SelectionManager.addToSelection(GetAlphaButtonDown().ToString());
+        Debug.Log(CurrentSelection.Selected.Count);
+    }
+
+    public void loadSelection()
+    {
+        Debug.Log("Selector issue load selection.");
+        CurrentSelection.deselectAll();
+        SelectionManager.loadSelection(GetAlphaButtonDown().ToString());
+        CurrentSelection.activate();
+        Debug.Log(CurrentSelection.Selected.Count);
     }
 
     private void setSelected()

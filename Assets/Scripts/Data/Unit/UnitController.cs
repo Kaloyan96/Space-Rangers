@@ -4,50 +4,20 @@ using UnityEngine;
 
 public class UnitController : MonoBehaviour
 {
-    private Command currentCommand;
-    private bool idle;
-    List<Command> commandQueue;
-    Unit unit;
-    
+    public Unit Unit { get; private set; }
+
     // Start is called before the first frame update
     void Start()
     {
-        unit = gameObject.GetComponent<Unit>();
-        commandQueue = new List<Command>();
-        currentCommand = null;
-        idle = true;
+        Unit = gameObject.GetComponent<Unit>();
     }
 
-    // Update is called once per frame
-    void Update()
+    public void moveTo(Vector3 destination, bool interupt)
     {
-        if (!idle && (currentCommand != null && currentCommand.finished()))
+        if (interupt)
         {
-            Debug.Log(currentCommand);
-            idle = true;
+            Unit.StateMachine.interupt();
         }
-        if (idle == true && commandQueue.Count != 0)
-        {
-            //Debug.Log(idle + " " + commandQueue.Count);
-            idle = false;
-            currentCommand = commandQueue[0];
-            commandQueue.RemoveAt(0);
-
-            currentCommand.execute();
-            //Debug.Log("Executing" + currentCommand.finished());
-        }
-    }
-
-    public void addCommand(Command cmd)
-    {
-        commandQueue.Add(cmd);
-        Debug.Log(idle + " " + commandQueue.Count);
-    }
-
-    public void interupt()
-    {
-        Debug.Log("Interupt");
-        commandQueue.Clear();
-        idle = true;
+        Unit.StateMachine.addCommand(new MoveCommand(ScriptableObject.CreateInstance<DestinationReached>(), destination));
     }
 }

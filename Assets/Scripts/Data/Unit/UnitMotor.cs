@@ -6,14 +6,13 @@ using UnityEngine.AI;
 [RequireComponent(typeof(NavMeshAgent))]
 public class UnitMotor : MonoBehaviour
 {
-    NavMeshAgent navAgent;
-    public NavMeshAgent NavAgent { get { return navAgent; } set { } }
+    public NavMeshAgent NavAgent { get; private set; }
     Transform target;
 
     // Start is called before the first frame update
     void Start()
     {
-        navAgent = GetComponent<NavMeshAgent>();
+        NavAgent = GetComponent<NavMeshAgent>();
     }
 
     // Update is called once per frame
@@ -23,20 +22,20 @@ public class UnitMotor : MonoBehaviour
         if (target != null)
         {
             // Move towards it and look at it
-            navAgent.SetDestination(target.position);
+            NavAgent.SetDestination(target.position);
             faceTarget();
         }
     }
 
     public void moveToPoint(Vector3 point)
     {
-        navAgent.SetDestination(point);
+        NavAgent.SetDestination(point);
     }
 
     public void followTarget(Interactable newTarget)
     {
-        navAgent.stoppingDistance = newTarget.InteractionRange;
-        navAgent.updateRotation = false;
+        NavAgent.stoppingDistance = newTarget.InteractionRange;
+        NavAgent.updateRotation = false;
 
         target = newTarget.InteractionSource;
     }
@@ -44,8 +43,8 @@ public class UnitMotor : MonoBehaviour
     // Stop following a target
     public void stopFollowingTarget()
     {
-        navAgent.stoppingDistance = 0f;
-        navAgent.updateRotation = true;
+        NavAgent.stoppingDistance = 0f;
+        NavAgent.updateRotation = true;
 
         stop();
     }

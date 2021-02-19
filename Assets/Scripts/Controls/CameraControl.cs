@@ -27,6 +27,7 @@ public class CameraControl : MonoBehaviour
     void Start()
     {
         cam = Camera.main;
+        Debug.Log("Camera is " + cam);
     }
 
 
@@ -41,7 +42,7 @@ public class CameraControl : MonoBehaviour
     {
         if (isMovementInputActive())
         {
-            position = transform.position;
+            position = cam.transform.position;
 
             updateDirectionVectors();
 
@@ -81,7 +82,8 @@ public class CameraControl : MonoBehaviour
 
             position.y = Mathf.Clamp(position.y, ground.point.y + minHeight, ground.point.y + maxHeight);
 
-            transform.position = position;
+            // transform.position = position;
+            cam.transform.position = position;
         }
     }
 
@@ -96,15 +98,15 @@ public class CameraControl : MonoBehaviour
 
     private void updateDirectionVectors()
     {
-        forwardDirection = transform.forward;
+        forwardDirection = cam.transform.forward;
         forwardDirection.y = 0;
         forwardDirection.Normalize();
 
-        rightDirection = transform.right;
+        rightDirection = cam.transform.right;
         rightDirection.y = 0;
         rightDirection.Normalize();
 
-        upDirection = transform.up;
+        upDirection = cam.transform.up;
         upDirection.x = 0;
         upDirection.z = 0;
         upDirection.Normalize();
@@ -128,10 +130,10 @@ public class CameraControl : MonoBehaviour
 
     void Rotation()
     {
-            //Debug.Log("123");
+        //Debug.Log("123");
         if (Input.GetButton("Fire3"))
         {
-            Debug.Log("123");
+            //Debug.Log("123");
             // Our mouseX variable gets set to the X position of the mouse multiplied by the rotation speed added to it.
 
             mouseX += Input.GetAxis("Mouse X") * rotSpeed;
@@ -146,7 +148,8 @@ public class CameraControl : MonoBehaviour
 
             // Set the rotation of the camera target along the X axis (pitch) to mouseY (up & down) & Y axis (yaw) to mouseX (left & right), the Z axis (roll) is always set to 0 as we do not want the camera to roll.
 
-            transform.rotation = Quaternion.Euler(mouseY, mouseX, 0);
+            // transform.rotation = Quaternion.Euler(mouseY, mouseX, 0);
+            cam.transform.rotation = Quaternion.Euler(mouseY, mouseX, 0);
 
         }
 
